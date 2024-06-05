@@ -9,7 +9,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBox x:Name="txtNewTask" Width="300" Margin="0,0,10,0" Text="Enter new task..."/>
+            <TextBox x:Name="txtNewTask" Width="300" Margin="0,0,10,0" Text="Enter new task..." 
+                     GotFocus="TxtNewTask_GotFocus" LostFocus="TxtNewTask_LostFocus" KeyDown="TxtNewTask_KeyDown"/>
             <Button Content="Add Task" Click="AddTask_Click"/>
         </StackPanel>
 
@@ -17,10 +18,19 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding IsCompleted}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding Title}" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Default CheckBox Control -->
+                        <CheckBox IsChecked="{Binding IsCompleted}" Checked="Task_Checked"/>
+
+                        <!-- Task Title -->
+                        <TextBlock Text="{Binding Title}" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" />
+
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
