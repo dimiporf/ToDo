@@ -14,28 +14,33 @@
             <Button Content="Add Task" Click="AddTask_Click"/>
         </StackPanel>
 
-        <ListBox Grid.Row="1" x:Name="lstTasks" Margin="10" Background="#f5f5f5" BorderBrush="Transparent"
+        <ListBox Grid.Row="1" x:Name="lstTasks" Margin="10" BorderBrush="Transparent"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Margin="0,5,0,5" Background="{Binding BackgroundColor}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Default CheckBox Control -->
-                        <CheckBox IsChecked="{Binding IsCompleted, UpdateSourceTrigger=PropertyChanged}" Checked="Task_Checked" Unchecked="Task_Unchecked"/>
+                        <!-- Checkbox -->
+                        <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted, UpdateSourceTrigger=PropertyChanged}" 
+                                  Checked="Task_Checked" VerticalAlignment="Bottom" Unchecked="Task_Unchecked"/>
 
                         <!-- Task Title -->
-                        <TextBlock Text="{Binding Title}" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" Margin="10,0,10,0"
+                                   TextTrimming="CharacterEllipsis" Width="700"
+                                   Foreground="{Binding TextColor}" Opacity="{Binding TextOpacity}"> <!-- Bind Opacity to TextOpacity -->
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
+                                    <!-- Trigger to change appearance when IsCompleted is true -->
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                            <!-- Set properties to make text appear disabled -->
                                             <Setter Property="Foreground" Value="Gray"/>
-                                            <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -43,7 +48,8 @@
                         </TextBlock>
 
                         <!-- Delete Button -->
-                        <Button Content="Delete" Grid.Column="2" Margin="10,0,0,0" Click="DeleteTask_Click"/>
+                        <Button Grid.Column="2" Content="Delete" Margin="10,0,0,0" Click="DeleteTask_Click"
+                                IsEnabled="{Binding IsEnabled}"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
