@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace ToDo
 {
@@ -93,8 +94,22 @@ namespace ToDo
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
             Button deleteButton = (Button)sender;
-            Task taskToDelete = (Task)deleteButton.DataContext;
-            Tasks.Remove(taskToDelete);
+            FrameworkElement container = (FrameworkElement)deleteButton.Parent;
+
+            // Animate the task item to vanish
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = container.ActualHeight,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(0.3)
+            };
+            animation.Completed += (s, _) =>
+            {
+                Task taskToDelete = (Task)deleteButton.DataContext;
+                Tasks.Remove(taskToDelete);
+            };
+
+            container.BeginAnimation(HeightProperty, animation);
         }
     }
 }
