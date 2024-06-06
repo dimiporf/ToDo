@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace ToDo
 {
@@ -14,6 +13,7 @@ namespace ToDo
     {
         // Collection to store tasks
         public ObservableCollection<Task> Tasks { get; set; }
+        private int nextTaskID = 1; // To assign unique IDs to tasks
 
         // Constructor
         public MainWindow()
@@ -52,44 +52,20 @@ namespace ToDo
             }
         }
 
-        // Event handler for handling task completion
-        private void Task_Completed(object sender, EventArgs e)
-        {
-            // Get the task item container
-            FrameworkElement container = (FrameworkElement)((Control)sender).Parent;
-
-            // Animate the task item
-            DoubleAnimation animation = new DoubleAnimation
-            {
-                From = container.ActualWidth,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(0.3)
-            };
-            // Remove the task from the collection when animation completes
-            animation.Completed += (s, _) => Tasks.Remove((Task)container.DataContext);
-            container.BeginAnimation(WidthProperty, animation);
-        }
-
         // Event handler for handling task checkbox checked event
         private void Task_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
-            if (checkBox.IsChecked == true)
-            {
-                // Get the task item container
-                FrameworkElement container = (FrameworkElement)((Control)sender).Parent;
+            Task task = (Task)checkBox.DataContext;
+            task.IsCompleted = true; // Mark the task as completed
+        }
 
-                // Animate the task item
-                DoubleAnimation animation = new DoubleAnimation
-                {
-                    From = container.ActualWidth,
-                    To = 0,
-                    Duration = TimeSpan.FromSeconds(0.3)
-                };
-                // Remove the task from the collection when animation completes
-                animation.Completed += (s, _) => Tasks.Remove((Task)container.DataContext);
-                container.BeginAnimation(WidthProperty, animation);
-            }
+        // Event handler for handling task checkbox unchecked event
+        private void Task_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            Task task = (Task)checkBox.DataContext;
+            task.IsCompleted = false; // Mark the task as not completed
         }
 
         // Event handler for handling Enter key press in the new task text box
@@ -107,10 +83,18 @@ namespace ToDo
             string newTaskTitle = txtNewTask.Text.Trim();
             if (!string.IsNullOrWhiteSpace(newTaskTitle))
             {
-                // Add a new task to the collection and clear the text box
-                Tasks.Add(new Task { Title = newTaskTitle });
+                // Add a new task to the collection with a unique ID and clear the text box
+                Tasks.Add(new Task { ID = nextTaskID++, Title = newTaskTitle });
                 txtNewTask.Clear();
             }
+        }
+
+        // Event handler for deleting a task
+        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            Button deleteButton = (Button)sender;
+            Task taskToDelete = (Task)deleteButton.DataContext;
+            Tasks.Remove(taskToDelete);
         }
     }
 }
